@@ -11,7 +11,7 @@
 
 class MovieDatabase {
 private:
-    std::set<Movie*> movies;
+    std::vector<Movie*> movies;
 public:
     inline MovieDatabase();
     inline explicit MovieDatabase(const std::string& dataSourcePath);
@@ -28,10 +28,10 @@ public:
      *      - implement an ordering func that can take diff funcs for diff orders
      *      - ^ answer queries with these in main
      */
-    inline const std::set<Movie*>& getMovies() const;
+    inline const std::vector<Movie*>& getMovies() const;
     inline void addMovie(Movie& m); // blocks duplicates via mem/pointer
     inline bool containsMovie(Movie& m) const; // check via pointer
-    inline Movie* getMovie(int index);
+    //inline Movie* getMovie(int index);
     inline void removeMovie(Movie& m);
     inline void removeMovie(int index);
 
@@ -46,34 +46,25 @@ std::istream& operator>>(std::istream& istr, MovieDatabase& md);
 /*
  * Accessor methods for MovieDatabase class.
  */
-inline const std::set<Movie *>& MovieDatabase::getMovies() const {
+inline const std::vector<Movie *>& MovieDatabase::getMovies() const {
     return this->movies;
 }
 
 
 inline void MovieDatabase::addMovie(Movie& m) {
-    this->movies.insert(&m);
+    // If database does not contain movie, add it
+    if (!this->containsMovie(m)) {
+        this->movies.push_back(&m);
+    }
 }
 
-/**
+/** todo: is this chekcing via pointer or operator==? TEST TEST TEST!
  * Check if the Database contains a movie.
  * @param m pointer to Movie to check for.
  * @return true if the same Movie was found in the database.
  */
 inline bool MovieDatabase::containsMovie(Movie& m) const {
-    return (this->movies.find(&m) != movies.end());
-}
-
-Movie *MovieDatabase::getMovie(int index) {
-
-    if (index < this->getMovies().size()) {
-
-        // Get iterator for set, advance by index position given, and return object at that position
-        return *std::next(this->getMovies().begin(), index);
-
-    }
-    else return nullptr;
-
+    return (std::find(movies.begin(), movies.end(), &m) != movies.end());
 }
 
 /**
@@ -81,7 +72,7 @@ Movie *MovieDatabase::getMovie(int index) {
  * @param m the Movie to remove.
  */
 inline void MovieDatabase::removeMovie(Movie& m) {
-    this->movies.erase(&m);
+    this->movies.erase(std::remove(movies.end(), movies.begin(), &m));
 }
 
 /**
@@ -90,10 +81,10 @@ inline void MovieDatabase::removeMovie(Movie& m) {
  */
 inline void MovieDatabase::removeMovie(int index){
 
-    // Prevent attempt to remove an index outside of the set
+    // Prevent attempt to remove an index outside of the vector
     if (index < this->getMovies().size()) {
 
-        this->removeMovie(*this->getMovie(index));
+        this->removeMovie(* this->getMovies()[index]);
 
     }
 

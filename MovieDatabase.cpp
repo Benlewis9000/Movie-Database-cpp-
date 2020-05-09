@@ -14,7 +14,7 @@ MovieDatabase::~MovieDatabase(){
 
     // Free memory for each Movie pointer
     for (Movie* movie : this->getMovies()) free(movie);
-    // std::set will automatically run it's destructor
+    // std::vector will automatically run it's destructor
 
 }
 
@@ -114,16 +114,35 @@ void MovieDatabase::testMovieDatabase() {
     std::cout << md << "\n";
 
     // Test database modifiers (add, remove)
-    std::set<Movie*>::iterator it = md.getMovies().begin();
-    std::advance(it, 0);
-    Movie* m = *it;
+
+    /* Todo: remove - no longer need iterator, vector sys porovides random access []
+     * std::vector<Movie*>::const_iterator it = md.getMovies().cbegin();
+     * auto it = md.getMovies().begin();
+     * std::advance(it, 0);
+    */
+    Movie* m = md.getMovies()[0];
+    std::cout << "Removing movie (by pointer): " << *m << "\n";
     md.removeMovie(*m);
-    std::cout << md << "\n";
+    //std::cout << md << "\n";
+    std::cout << "Removing movie (by index) at [0]: " << *md.getMovies()[0] << "\n";
     md.removeMovie(0);
-    std::cout << md << "\n";
+    //std::cout << md << "\n";
     m = new Movie("Some Title", 2020, Certificate::UNKNOWN, "Horror/Comedy", 125, 0.1);
+    std::cout << "Adding movie: " << *m << "\n\n";
     md.addMovie(*m);
     std::cout << md << "\n";
 
+    // Test copy assignment operator
+    MovieDatabase mdCopy1 = md;
+    std::cout << "Copying database using copy assignment operator= :\n";
+    std::cout << "Pointer " << md.getMovie(0) << " in original database points to Movie " << *md.getMovie(0) << "\n";
+    std::cout << "Pointer " << mdCopy1.getMovie(0) << " in copy database points to Movie " << *mdCopy1.getMovie(0) << "\n\n";
+    MovieDatabase mdCopy2(md);
+    std::cout << "Copying database using copy constructor:\n";
+    std::cout << "Pointer " << md.getMovie(0) << " in original database points to Movie " << *md.getMovie(0) << "\n";
+    std::cout << "Pointer " << mdCopy2.getMovie(0) << " in copy database points to Movie " << *mdCopy2.getMovie(0) << "\n\n";
+    std::cout << "(observe \"same\" movie, different memory address, hence deep copy)" << "\n\n";
+
+    std::cout << "End of MovieDatabase tests.\n";
 
 }

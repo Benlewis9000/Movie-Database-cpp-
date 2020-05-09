@@ -133,4 +133,6 @@ void Movie::testMovie(){
     equals = mInCopy == mIn ? "True" : "False";
     std::cout << mIn << " == " << mInCopy << ": " << equals << "\n";
 
+    std::cout << "End of Movie tests.\n";
+
 }
