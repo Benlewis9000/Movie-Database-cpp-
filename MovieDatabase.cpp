@@ -99,45 +99,46 @@ MovieDatabase &MovieDatabase::operator=(const MovieDatabase &md) {
 
 }
 
-/**
- * Get a database of all movies of a certain genre from the current database.
- * @param g genre required as a string.
- * @return MovieDatabase where each Movie contains genre passed.
- */
-MovieDatabase MovieDatabase::getFromGenre(const std::string &g) const {
-
-    MovieDatabase md;
-
-    // Iterate through movies, if it has specified genres, add to new database
-    for (Movie* m : this->getMovies()){
-
-        if (m->hasGenre(g)) md.addMovie(*m);
-
-    }
-
-    //return new database
-    return md;
-}
-
-/**
- * Get a database of all movies of a certain Certificate from the current database.
- * @param c Certificate required.
- * @return MovieDatabase where each Movie has the Certificate passed.
- */
-MovieDatabase MovieDatabase::getFromCertificate(const Certificate &c) const {
-
-    MovieDatabase md;
-
-    // Iterate through movies, if it has specified Certificate, add to new database
-    for (Movie* m : this->getMovies()){
-
-        if (m->getCertificate() == &c) md.addMovie(*m);
-
-    }
-
-    // return new database
-    return md;
-}
+//
+///**
+// * Get a database of all movies of a certain genre from the current database.
+// * @param g genre required as a string.
+// * @return MovieDatabase where each Movie contains genre passed.
+// */
+//MovieDatabase MovieDatabase::getFromGenre(const std::string &g) const {
+//
+//    MovieDatabase md;
+//
+//    // Iterate through movies, if it has specified genres, add to new database
+//    for (Movie* m : this->getMovies()){
+//
+//        if (m->hasGenre(g)) md.addMovie(*m);
+//
+//    }
+//
+//    //return new database
+//    return md;
+//}
+//
+///**
+// * Get a database of all movies of a certain Certificate from the current database.
+// * @param c Certificate required.
+// * @return MovieDatabase where each Movie has the Certificate passed.
+// */
+//MovieDatabase MovieDatabase::getFromCertificate(const Certificate &c) const {
+//
+//    MovieDatabase md;
+//
+//    // Iterate through movies, if it has specified Certificate, add to new database
+//    for (Movie* m : this->getMovies()){
+//
+//        if (m->getCertificate() == &c) md.addMovie(*m);
+//
+//    }
+//
+//    // return new database
+//    return md;
+//}
 
 /**
  * Test harness for MovieDatabase class.
@@ -147,6 +148,7 @@ void MovieDatabase::testMovieDatabase() {
     MovieDatabase md;
 
     // Input file stream from "films.txt"
+    std::cout << "Reading in from \"films.txt\"\n";
     std::ifstream ifs("films.txt", std::ifstream::in);
     // Test operator>>
     ifs >> md;
@@ -154,12 +156,6 @@ void MovieDatabase::testMovieDatabase() {
     std::cout << md << "\n";
 
     // Test database modifiers (add, remove)
-
-    /* Todo: remove - no longer need iterator, vector sys porovides random access []
-     * std::vector<Movie*>::const_iterator it = md.getMovies().cbegin();
-     * auto it = md.getMovies().begin();
-     * std::advance(it, 0);
-    */
     Movie* m = md.getMovies()[0];
     std::cout << "Removing movie (by pointer): " << *m << "\n";
     md.removeMovie(*m);
@@ -184,6 +180,22 @@ void MovieDatabase::testMovieDatabase() {
     std::cout << "Pointer " << md.getMovies()[0] << " in original database points to Movie " << *md.getMovies()[0] << "\n";
     std::cout << "Pointer " << mdCopy2.getMovies()[0] << " in copy database points to Movie " << *mdCopy2.getMovies()[0] << "\n\n";
     std::cout << "(observe \"same\" movie, different memory address, hence deep copy)" << "\n\n";
+
+    // Lambda that checks a Movie is of genre "FilmNoir"
+    auto isFilmNoir = [] (const Movie* m) { return m->hasGenre("Film-Noir"); };
+    // Sub-database of md containing copies of all FilmNoir
+    MovieDatabase filmNoirs = md.getFrom(isFilmNoir);
+    std::cout << "Film-Noirs:\n" << filmNoirs << "\n";
+
+    // Lambda that compares by year released
+    auto compareByYearReleased = [] (auto & direction, const Movie* a, const Movie* b) { return direction (a->getYearReleased(), b->getYearReleased() ); };
+
+    // Sort in ascending direction by year released
+    filmNoirs.sortMovies(MovieDatabase::ascending<int>, compareByYearReleased);
+    std::cout << "Film-Noirs sorted by year released (ascending):\n" << filmNoirs << "\n";
+    // Sort in descending direction by year released
+    filmNoirs.sortMovies(MovieDatabase::descending<int>, compareByYearReleased);
+    std::cout << "Film-Noirs sorted by year released (descending):\n" << filmNoirs << "\n";
 
     std::cout << "End of MovieDatabase tests.\n";
 

@@ -99,8 +99,15 @@ inline void MovieDatabase::removeMovie(int index){
 
 }
 
+/**
+ * Empty MovieDatabase constructor.
+ */
 inline MovieDatabase::MovieDatabase() {}
 
+/**
+ * Construct a MovieDatabase and populate it with data read in from file found at given path.
+ * @param dataSourcePath to CSV file of Movie data.
+ */
 inline MovieDatabase::MovieDatabase(const std::string& dataSourcePath) {
 
     std::ifstream ifs(dataSourcePath, std::ifstream::in);
@@ -121,31 +128,40 @@ inline bool MovieDatabase::descending(const T& x, const T& y) {
     return x > y;
 }
 
-/**
+ /**
  * Sort the list of Movies in the MovieDatabase.
  * @tparam T direction (ascending or descending).
- * @param direction to sort in.
- */
+ * @tparam L lambda function.
+ * @param direction to sort in (ascending/descending).
+ * @param lambda comparing two Movies in a given direction.
+  */
 template<typename T, typename L>
 void MovieDatabase::sortMovies(T direction, L comparison) {
 
-    // Sort movies vector via lambda function
+    // Use algorithm::sort, provide lambda for comparator
     std::sort(std::begin(this->movies), std::end(this->movies),
               [direction, &comparison](const Movie* a, const Movie* b) -> bool {
 
-                  // Direction dictates ascending or descending
+                  // Call lambda comparison passed as an arg for outer lambdas comparison condition
                   return comparison(direction, a, b);
-                  // return direction(a->getYearReleased(), b->getYearReleased()); // todo .yearReleased as placeholder
 
-              } );       // todo Functor for what bit to sort eg Certificate sort?
+              } );
 
 }
 
+/**
+ * Get a MovieDatabase of all Movies from this MovieDatabase that fit the qualifying criteria.
+ * @tparam L lambda function that takes a Movie*.
+ * @param qualifier lambda that check a Movie for certain criteria, returning true if it fits.
+ * @return a MovieDatabase of Movie* that fit the criteria.
+ */
 template <typename L>
 MovieDatabase MovieDatabase::getFrom(L qualifier){
 
+    // New database
     MovieDatabase md;
 
+    // Iterate movies in this database, if they fit the criteria defined in the lambda, add to new database
     for (Movie* m : this->getMovies()){
 
         if (qualifier(m)) md.addMovie(*m);

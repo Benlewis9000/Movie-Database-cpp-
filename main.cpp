@@ -19,32 +19,24 @@ int main() {
 
     MovieDatabase md("films.txt");
 
-    // todo: can define lambdas like this, or whack them straight into args (probs more readable like this coz can label and RE-USE)
-    //auto compareByRelease = [] (auto & direction, const Movie* a, const Movie* b) { return direction (a->getYearReleased(), b->getYearReleased() ); };
-
-    /*
-     * todo:
-     *      - Finish main by answer queries using..
-     *          - comparison lambdas and directions in .sortMovies
-     *          - get sets of movies (sub databases) using lambdas and .getFrom
-     */
-
-    md.sortMovies(MovieDatabase::ascending<int>, [] (auto & direction, const Movie* a, const Movie* b) { return direction (a->getYearReleased(), b->getYearReleased() ); } );
-    std::cout << md << "\n";
-    //md.sortMovies(MovieDatabase::descending<int>, compareByRelease);
+    auto compareByYearReleased = [](auto & direction, const Movie* a, const Movie* b) { return direction(a->getYearReleased(), b->getYearReleased()); };
+    md.sortMovies(MovieDatabase::ascending<int>, compareByYearReleased);
     std::cout << md << "\n";
 
-    MovieDatabase comedies = md.getFromGenre("Comedy");
-    std::cout << "comedies:\n" << comedies << "\n";
+    auto isFilmNoir = [](const Movie* m) { return m->hasGenre("Film-Noir"); };
+    auto compareByDuration = [](auto & direction, const Movie* a, const Movie* b) { return direction(a->getDuration(), b->getDuration()); };
+    MovieDatabase filmNoirs = md.getFrom(isFilmNoir);
+    filmNoirs.sortMovies(MovieDatabase::descending<int>, compareByDuration);
+    std::cout << *filmNoirs.getMovies()[2] << "\n\n";
 
-    MovieDatabase PGs = md.getFromCertificate(*Certificate::PG);
-    std::cout << "PGs:\n" << PGs << "\n";
+    auto isUnrated = [](const Movie* m) { return m->getCertificate() == Certificate::UNRATED; };
+    MovieDatabase unratedFilms = md.getFrom(isUnrated);
+    unratedFilms.sortMovies(MovieDatabase::descending<int>, compareByYearReleased);
+    std::cout << *unratedFilms.getMovies()[7] << "\n\n";
 
-    auto isFilmNoir = [] (Movie* m) { return m->hasGenre("Film-Noir"); } ;
-    MovieDatabase l = md.getFrom(isFilmNoir);
-    std::cout << "Film-Noir:\n" << l << "\n";
-
-    std::cout << "end\n";
+    auto compareByTitleLength = [](auto & direction, const Movie* a, const Movie* b) { return direction(a->getTitle().length(), b->getTitle().length()); };
+    md.sortMovies(MovieDatabase::descending<int>, compareByTitleLength);
+    std::cout << *md.getMovies()[0] << "\n\n";
 
 }
 
