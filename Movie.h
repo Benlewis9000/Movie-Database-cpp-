@@ -27,10 +27,12 @@ private:
     double rating;
 
 public:
-    // Movie constructor with default values
+    // Constructor (with defaults)
     inline explicit Movie(std::string title = "", int yearReleased = 0, const Certificate* certificate = Certificate::UNKNOWN,
             std::string genres = "", int duration = 0, double rating = 0.0);
     // No destructor needed as member variables created only exist within scope of class (all stack, no new pointers to heap)
+
+    // Accessors
     inline const std::string& getTitle() const;
     inline int getYearReleased() const;
     inline const Certificate* getCertificate() const;
@@ -41,7 +43,7 @@ public:
     inline bool hasGenre(const std::string& genre) const;
     std::string toString() const;
 
-    // Test methods
+    // Test harness
     static void testMovie();
 
 };

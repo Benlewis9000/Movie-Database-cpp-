@@ -100,6 +100,46 @@ MovieDatabase &MovieDatabase::operator=(const MovieDatabase &md) {
 }
 
 /**
+ * Get a database of all movies of a certain genre from the current database.
+ * @param g genre required as a string.
+ * @return MovieDatabase where each Movie contains genre passed.
+ */
+MovieDatabase MovieDatabase::getFromGenre(const std::string &g) const {
+
+    MovieDatabase md;
+
+    // Iterate through movies, if it has specified genres, add to new database
+    for (Movie* m : this->getMovies()){
+
+        if (m->hasGenre(g)) md.addMovie(*m);
+
+    }
+
+    //return new database
+    return md;
+}
+
+/**
+ * Get a database of all movies of a certain Certificate from the current database.
+ * @param c Certificate required.
+ * @return MovieDatabase where each Movie has the Certificate passed.
+ */
+MovieDatabase MovieDatabase::getFromCertificate(const Certificate &c) const {
+
+    MovieDatabase md;
+
+    // Iterate through movies, if it has specified Certificate, add to new database
+    for (Movie* m : this->getMovies()){
+
+        if (m->getCertificate() == &c) md.addMovie(*m);
+
+    }
+
+    // return new database
+    return md;
+}
+
+/**
  * Test harness for MovieDatabase class.
  */
 void MovieDatabase::testMovieDatabase() {
@@ -126,6 +166,8 @@ void MovieDatabase::testMovieDatabase() {
     //std::cout << md << "\n";
     std::cout << "Removing movie (by index) at [0]: " << *md.getMovies()[0] << "\n";
     md.removeMovie(0);
+    std::cout << "Attempt to remove movie at [999999]:\n";
+    md.removeMovie(999999);
     //std::cout << md << "\n";
     m = new Movie("Some Title", 2020, Certificate::UNKNOWN, "Horror/Comedy", 125, 0.1);
     std::cout << "Adding movie: " << *m << "\n\n";
@@ -135,14 +177,18 @@ void MovieDatabase::testMovieDatabase() {
     // Test copy assignment operator
     MovieDatabase mdCopy1 = md;
     std::cout << "Copying database using copy assignment operator= :\n";
-    std::cout << "Pointer " << md.getMovie(0) << " in original database points to Movie " << *md.getMovie(0) << "\n";
-    std::cout << "Pointer " << mdCopy1.getMovie(0) << " in copy database points to Movie " << *mdCopy1.getMovie(0) << "\n\n";
+    std::cout << "Pointer " << md.getMovies()[0] << " in original database points to Movie " << *md.getMovies()[0] << "\n";
+    std::cout << "Pointer " << mdCopy1.getMovies()[0] << " in copy database points to Movie " << *mdCopy1.getMovies()[0] << "\n\n";
     MovieDatabase mdCopy2(md);
     std::cout << "Copying database using copy constructor:\n";
-    std::cout << "Pointer " << md.getMovie(0) << " in original database points to Movie " << *md.getMovie(0) << "\n";
-    std::cout << "Pointer " << mdCopy2.getMovie(0) << " in copy database points to Movie " << *mdCopy2.getMovie(0) << "\n\n";
+    std::cout << "Pointer " << md.getMovies()[0] << " in original database points to Movie " << *md.getMovies()[0] << "\n";
+    std::cout << "Pointer " << mdCopy2.getMovies()[0] << " in copy database points to Movie " << *mdCopy2.getMovies()[0] << "\n\n";
     std::cout << "(observe \"same\" movie, different memory address, hence deep copy)" << "\n\n";
 
     std::cout << "End of MovieDatabase tests.\n";
 
 }
+
+
+
+
