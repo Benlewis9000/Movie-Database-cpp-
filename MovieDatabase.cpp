@@ -1,6 +1,11 @@
-//
-// Created by Ben on 06/05/2020.
-//
+/*
+ * MovieDatabase.cpp
+ * Offline Movie Database in C++ (Programming 2 CW2)
+ * Author: Ben Lewis, 100250459
+ * Last edited: 10/05/2020 11:00
+ *
+ * Written for C++17.
+ */
 
 #include <sstream>
 #include <fstream>
@@ -26,6 +31,7 @@ MovieDatabase::~MovieDatabase(){
  */
 std::ostream &operator<<(std::ostream &ostr, const MovieDatabase &md) {
 
+    // Iterate over movies in database and stream out
     for (Movie* m : md.getMovies()) std::cout << *m << "\n";
 
     return ostr;
@@ -40,11 +46,13 @@ std::ostream &operator<<(std::ostream &ostr, const MovieDatabase &md) {
  */
 std::istream &operator>>(std::istream &istr, MovieDatabase &md) {
 
-    // string to temp store each line in
+    // string to temp store each line streamed in
     std::string line;
 
+    // while line is available to read in, read in and store in 'line'
     while(std::getline(istr, line)){
 
+        // Create new movie, populate with data by streaming in current line
         Movie* m = new Movie();
         std::stringstream s;
         s << line;
@@ -98,47 +106,6 @@ MovieDatabase &MovieDatabase::operator=(const MovieDatabase &md) {
     return *this;
 
 }
-
-//
-///**
-// * Get a database of all movies of a certain genre from the current database.
-// * @param g genre required as a string.
-// * @return MovieDatabase where each Movie contains genre passed.
-// */
-//MovieDatabase MovieDatabase::getFromGenre(const std::string &g) const {
-//
-//    MovieDatabase md;
-//
-//    // Iterate through movies, if it has specified genres, add to new database
-//    for (Movie* m : this->getMovies()){
-//
-//        if (m->hasGenre(g)) md.addMovie(*m);
-//
-//    }
-//
-//    //return new database
-//    return md;
-//}
-//
-///**
-// * Get a database of all movies of a certain Certificate from the current database.
-// * @param c Certificate required.
-// * @return MovieDatabase where each Movie has the Certificate passed.
-// */
-//MovieDatabase MovieDatabase::getFromCertificate(const Certificate &c) const {
-//
-//    MovieDatabase md;
-//
-//    // Iterate through movies, if it has specified Certificate, add to new database
-//    for (Movie* m : this->getMovies()){
-//
-//        if (m->getCertificate() == &c) md.addMovie(*m);
-//
-//    }
-//
-//    // return new database
-//    return md;
-//}
 
 /**
  * Test harness for MovieDatabase class.

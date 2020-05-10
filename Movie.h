@@ -48,6 +48,7 @@ public:
 
 };
 
+// Operator overloads
 inline bool operator==(const Movie& m1, const Movie& m2);
 inline bool operator!=(const Movie& m1, const Movie& m2);
 inline std::ostream& operator<<(std::ostream& ostr, const Movie& m);
@@ -150,6 +151,7 @@ inline bool operator==(const Movie &m1, const Movie &m2) {
  */
 inline bool operator!=(const Movie &m1, const Movie &m2){
 
+    // Inverse of operator==
     return (!(m1==m2));
 
 }

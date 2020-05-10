@@ -8,11 +8,8 @@
  */
 
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <iterator>
 #include <iomanip>
 #include "Movie.h"
 

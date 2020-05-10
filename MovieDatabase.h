@@ -1,6 +1,11 @@
-//
-// Created by Ben on 06/05/2020.
-//
+/*
+ * MovieDatabase.h
+ * Offline Movie Database in C++ (Programming 2 CW2)
+ * Author: Ben Lewis, 100250459
+ * Last edited: 10/05/2020 00:52
+ *
+ * Written for C++17.
+ */
 #include <fstream>
 #include <vector>
 #include "Movie.h"
@@ -24,13 +29,10 @@ public:
 
     // Accessors
     inline const std::vector<Movie*>& getMovies() const;
-    inline void addMovie(Movie& m); // blocks duplicates via mem/pointer
-    inline bool containsMovie(Movie& m) const; // check via pointer
+    inline void addMovie(Movie& m);
+    inline bool containsMovie(Movie& m) const;
     inline void removeMovie(Movie& m);
     inline void removeMovie(int index);
-
-    MovieDatabase getFromGenre(const std::string& g) const;
-    MovieDatabase getFromCertificate(const Certificate& c) const;
 
     template <typename L>
     MovieDatabase getFrom(L qualifier);
@@ -48,6 +50,7 @@ public:
 
 };
 
+// Operator overloads
 std::ostream& operator<<(std::ostream& ostr, const MovieDatabase& md);
 std::istream& operator>>(std::istream& istr, MovieDatabase& md);
 
@@ -70,7 +73,7 @@ inline void MovieDatabase::addMovie(Movie& m) {
     }
 }
 
-/** todo: is this chekcing via pointer or operator==? TEST TEST TEST!
+/**
  * Check if the Database contains a movie.
  * @param m pointer to Movie to check for.
  * @return true if the same Movie was found in the database.
@@ -110,8 +113,10 @@ inline MovieDatabase::MovieDatabase() {}
  */
 inline MovieDatabase::MovieDatabase(const std::string& dataSourcePath) {
 
+    // Get input file stream from path given
     std::ifstream ifs(dataSourcePath, std::ifstream::in);
 
+    // Stream data into this database
     ifs >> *this;
 
 }
@@ -142,7 +147,7 @@ void MovieDatabase::sortMovies(T direction, L comparison) {
     std::sort(std::begin(this->movies), std::end(this->movies),
               [direction, &comparison](const Movie* a, const Movie* b) -> bool {
 
-                  // Call lambda comparison passed as an arg for outer lambdas comparison condition
+                  // Call lambda comparison passed for comparison condition
                   return comparison(direction, a, b);
 
               } );
